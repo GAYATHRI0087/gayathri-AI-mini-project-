@@ -1,0 +1,100 @@
+// gayathri P
+//2117240070087
+
+import matplotlib.pyplot as plt
+import random
+from collections import Counter
+
+# --- Classroom size ---
+R, C = 5, 6  # rows × columns
+
+# --- Student data ---
+students = [
+    {"id": "S01", "dept": "CS", "section": "A", "special": False},
+    {"id": "S02", "dept": "CS", "section": "A", "special": False},
+    {"id": "S03", "dept": "ECE", "section": "B", "special": False},
+    {"id": "S04", "dept": "ECE", "section": "B", "special": True},
+    {"id": "S05", "dept": "ME", "section": "A", "special": False},
+    {"id": "S06", "dept": "CS", "section": "B", "special": False},
+    {"id": "S07", "dept": "ME", "section": "B", "special": False},
+    {"id": "S08", "dept": "CS", "section": "A", "special": False},
+    {"id": "S09", "dept": "ECE", "section": "C", "special": False},
+    {"id": "S10", "dept": "ME", "section": "A", "special": False},
+]
+
+# --- Assign random seats ---
+seats = [(r, c) for r in range(R) for c in range(C)]
+random.shuffle(seats)
+
+solution = {seats[i]: students[i]["id"] for i in range(len(students))}
+students_by_id = {s["id"]: s for s in students}
+
+# --- Print output in terminal ---
+print("Seating Plan (row, col) -> Student ID")
+print("-" * 40)
+for seat in sorted(solution.keys()):
+    print(f"{seat} -> {solution[seat]}")
+
+# --- Prepare visualization ---
+dept_counts = Counter(s["dept"] for s in students)
+section_counts = Counter(s["section"] for s in students)
+
+fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+fig.suptitle("Exam Seating Visualization", fontsize=14, fontweight="bold")
+
+# Seating Layout
+ax = axes[0]
+ax.set_title("Classroom Grid Layout")
+ax.set_xlim(-0.5, C - 0.5)
+ax.set_ylim(-0.5, R - 0.5)
+ax.invert_yaxis()
+ax.set_xticks(range(C))
+ax.set_yticks(range(R))
+ax.grid(True, color="gray", linestyle="--", linewidth=0.5)
+
+dept_colors = {"CS": "skyblue", "ECE": "lightgreen", "ME": "salmon"}
+
+for seat, sid in solution.items():
+    r, c = seat
+    student = students_by_id[sid]
+    color = "gold" if student["special"] else dept_colors.get(student["dept"], "lightgrey")
+    ax.add_patch(plt.Rectangle((c - 0.5, r - 0.5), 1, 1, facecolor=color, edgecolor="black"))
+    ax.text(c, r, sid, ha="center", va="center", fontsize=8, fontweight="bold")
+
+# Bar Chart
+axes[1].bar(dept_counts.keys(), dept_counts.values(), color=["skyblue", "lightgreen", "salmon"])
+axes[1].set_title("Students by Department")
+axes[1].set_xlabel("Department")
+axes[1].set_ylabel("Count")
+
+# Pie Chart
+axes[2].pie(section_counts.values(), labels=section_counts.keys(), autopct="%1.1f%%", startangle=90)
+axes[2].set_title("Section Distribution")
+
+plt.tight_layout()
+plt.show()  # Shows popup visual output
+
+
+
+OUTPUT
+Seating Plan (row, col) -> Student ID
+
+(0, 0) -> S07
+
+(0, 3) -> $10
+
+(0, 4) -> S04
+
+(1, 1) -> S05
+
+(1, 2) -> S08
+
+(3, 0) -> S06
+
+(3, 1) -> S09
+
+(3, 2) -> S01
+
+(3, 3) -> S02
+
+(3, 4) -> S03
